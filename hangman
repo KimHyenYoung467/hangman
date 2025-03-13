@@ -1,165 +1,237 @@
+#include <iostream>
+#include <cstdio>
+using namespace std;
+
+/*
+void Test(int InputArray[], int* ptr, int length)
+{
+	cout << sizeof(InputArray) << endl;
+	printf("Adress %p\n", sizeof(InputArray) / sizeof(int));
+
+	for (int i = 0; i < length; ++i)
+	{
+		InputArray[i] = 0xFF;
+	}
+
+}
+int Array()
+{
+	const char* text = "heallo\0";
+	char text2[10] = "dhdk아\n";
+	char text3[10] = "dhdk아\n";
+
+	int arr[5] = { 1, 2, 3, 4, 5 };
+
+	arr[0 + 1];
+	cout << arr[0 + 1] << endl;
+	cout << arr[1] + 1 + 1 << endl;
+	return 0;
+}
+/*void Array()
+{
+	int arr[5] = { 1, 2, 3, 4, 5 };
+	int ar[5] = { 1, 2, 3, 4, 5 };
+
+	if (arr == ar)
+	{
+		cout << "true" << endl;
+	}
+	else
+	{
+		cout << "false" << endl;
+	}
+
+	//memcopy_s(ar, sizeof(arr), ar);
+
+	Test(arr, arr, sizeof(ar) / sizeof(ar[0])); //== sizeof(arr) / sizeof(int));
+	printf("Size of arr %d\n", arr);
+} */
+/*
+
+char words[MAX_WORDS][MAX_LENGTH] = {
+// 행복						"happiness\0",
+// 아름다운					"beautiful\0",
+// 프로그래밍				"programming\0",
+// 교육						"education\0",
+// 중요한					"important\0",
+// 모험						"adventure\0",
+// 도전						"challenge\0",
+// 양심						"conscience\0",
+// 발견						"discovery\0",
+// 방향						"direction\0"
+
+}; */
 #define MAX_LENGTH 15
 
-FILE* wordFile; 
-char* words = new char();   // 20개의 동적 메모리 할당 
+ 
+char* words = new char[20];   // 20개의 동적 메모리 할당 
 
+FILE* wordfile;
 
-FILE FileOpen(FILE* wordfile, string fileName, int score)
+FILE* FileOpen(const char* fileName, int* score)
 {
-	fopen_s(&wordfile, "D:\Word\File\wordText", "r+"); // 읽고 쓰기 전용으로 선언
+	
+	fopen_s(&wordfile, "D:\WordFile\wordText.txt", "r+");
 
-	fscanf_s(wordfile, "%s %d", fileName, &score);
-	
-	if (wordfile != nullptr ) fclose(wordFile);
-	
-	
-	return *wordfile; // FILE 포인터 반환 
+	if (wordfile == nullptr)
+	{
+		printf("파일을 열 수 없습니다.\n");
+		return nullptr;
+	}
+
+	fscanf_s(wordfile, "%d", score); //  "파일에서 정수를 하나 읽어서 score 변수에 저장하는 거다!
+	return wordfile;
 }
 
-FILE Binary(FILE* wordfile, int score)
+void Binary(const char* filename, int score)
 {
-	fopen_s(&wordfile, "D:\WordFile\wordText.dll", "wb");
+	FILE* wordfile;
+	fopen_s(&wordfile, filename, "wb");
+	if (wordfile == nullptr)
+	{
+		printf("파일을 열 수 없습니다.\n");
+		return;
+	}
 
-		if (wordfile == nullptr)
-		{
-			printf("파일을 열 수 없습니다.");
-			return;
-		}
-		fprintf(wordfile, "wordText."); 
-
-	fread(words, sizeof(char*), 10, wordfile); 
+	fwrite(&score, sizeof(int), 1, wordfile);
 	fclose(wordfile);
-
-	for (int i = 0; i < score; ++i)
-	{
-		printf("%d", words[i]); 
-	}
-	fwrite(words, sizeof(char*), score, wordfile); 
-	fclose(wordfile); 
-
-	return;
 }
 
-FILE TextList(FILE* wordfile, string Name , int score)
+
+void TextList(FILE* wordfile, const char* Name, int score)
 {
-	fprintf(wordfile, "이름 : %s, 개수 : %d\n", Name, score);
+	if (wordfile == nullptr) return;
 
-	for (int i = 0; i < score; ++i)
+	if (score > 0)
 	{
-		fscanf(wordfile, "이름 : % s, 개수 : % d\n",Name, &score);
-
-		i = fputs(words, wordfile);
-		wordfile[i];
+		fprintf(wordfile, "이름 : %s, 개수 : %d\n", Name, score);
+		fputs("happaness\0", wordfile);
+		fputs("beautiful\0", wordfile);
+		fputs("programming\0", wordfile);
+		fputs("education\0", wordfile);
+		fputs("important\0", wordfile);
+		fputs("adventure\0", wordfile);
+		fputs("challenge\0", wordfile);
+		fputs("conscience\0", wordfile);
+		fputs("direction\0", wordfile);
+		fputc(20, wordfile);
 	}
+	
 
-	if (wordfile == nullptr) FileClose(wordfile); 
-
-	return *wordfile; 
 }
 
-int pointerMove()
+
+int pointerMove(FILE* wordFile)
 {
-	if (fclose(wordFile))
-	{
-		rewind(wordFile);
-	}
-	if (wordFile == nullptr) return; 
+	if (wordFile == nullptr) return -1;
 
 	fseek(wordFile, 0, SEEK_END);
-	long fileSize = ftell(wordFile); 
-	rewind(wordFile); 
-	
+	long fileSize = ftell(wordFile);
+	rewind(wordFile);
+
 	printf("파일 크기 : %ld byte\n", fileSize);
-
-	return 0; 
+	return 0;
 }
 
-FILE FileClose(FILE* wordfile)
+int selecthang(FILE* wordfile)
 {
-	if (wordfile != nullptr)
-		fclose(wordfile);
+	srand(time(NULL));
+	if (wordfile == nullptr) return -1;
+	int randomIndex = rand() % 10;  // 단어 목록이 10개 있다고 가정
+
+	char temp[100];  // 충분한 크기의 버퍼
+	for (int i = 0; i <= randomIndex; ++i) {
+		if (fgets(temp, sizeof(temp), wordfile) == nullptr) return -1;
+	}
 }
 
-
-void play(char* word)
+void play(const char* word)
 {
-	long wrongCount = 0; // 틀린 횟수를 저장한다. 
-	long playCount = 5;
+	int wrongCount = 0;
+	int playCount = 5;
+
 	char Found[MAX_LENGTH] = { '_' };
 	bool isCheck = false;
 
-	int len = sizeof(word) / sizeof(char);
+	int len = strlen(word);
+
 	for (int i = 0; i < len; ++i)
 	{
-		printf("%s", Found[i]); // 숨겨진 값 출력 하기 
+		printf("%c ", Found[i]);
 	}
+	printf("\n");
 
-	while (playCount <= 0)
+	while (playCount > 0)
 	{
-		for (int i = 0; 0 <= playCount; ++i)
+		char input;
+		printf("글자 입력: ");
+		scanf_s(" %c", &input, 1);
+		isCheck = false;
+
+		for (int i = 0; i < len; ++i)
 		{
-			char input;
-			scanf_s("%s", &input);
-
-			playCount--;
-
-			for (int i = 0; i < len; ++i)
+			if (word[i] == input)
 			{
-				if (word[i] == input && !Found[i])
-				{
-					Found[i] = input;
-					isCheck = true; // 동일 한 것을 찾았다면 true  
-				}
-				else if (!isCheck)
-				{
-					printf("틀렸습니다!\n");
-					wrongCount++;
-				}
-				else if (Found[i])
-				{
-					printf("%s", word[i]);
-				}
-				else
-				{
-					printf("%_");
-				}
+				Found[i] = input;
+				isCheck = true;
 			}
-
-			int length = strlen(word);
-			int allFound = 1;
-			for (int i = 0; i < length; ++i)
-			{
-				if (!allFound)
-				{
-					allFound = 0;
-					break;
-				}
-			}
-
-			if (!allFound)
-			{
-				printf("축하합니다. 정답입니다. \n");
-				return;
-			}
-			else
-			{
-				printf("정답은 : %s\n", word);
-				return;
-			}
-
-			if (playCount == 0 && wrongCount == 5)
-			{
-				printf("실패 하셨습니다.\n");
-				return;
-			}
-			else
-			{
-				printf("다시 시도해주세요. 현재 플레이 카운트 : %d  , 현재 정답 카운트 : %d\n", playCount, wrongCount);
-			}
-
-
 		}
 
+		if (!isCheck)
+		{
+			printf("틀렸습니다!\n");
+			wrongCount++;
+		}
 
+		int allFound = 1;
+		for (int i = 0; i < len; ++i)
+		{
+			if (Found[i] == '_')
+			{
+				allFound = 0;
+				break;
+			}
+		}
+
+		if (allFound)
+		{
+			printf("축하합니다! 정답: %s\n", word);
+			return;
+		}
+
+		playCount--;
+
+		if (playCount == 0 && wrongCount == 0)
+		{
+			printf("실패하셨습니다. 정답: %s\n", word);
+			return;
+		}
 	}
 }
+
+int main()
+{
+	int num = 10; 
+	int* wordnum = &num; 
+
+	FILE* wordfile = FileOpen("wordText", wordnum);
+
+	if (wordfile == nullptr) {
+		printf("파일을 열 수 없습니다.\n");
+		return 1;
+	}
+
+	if (selecthang(wordfile) == -1) {
+		printf("단어를 선택하는 데 실패했습니다.\n");
+		return 1;
+	}
+	selecthang(wordfile); 
+
+	play(words);
+
+	delete[] words;  // 동적 메모리 해제
+	return 0;
+}
+
+
+
