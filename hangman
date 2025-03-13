@@ -1,0 +1,165 @@
+#define MAX_LENGTH 15
+
+FILE* wordFile; 
+char* words = new char();   // 20개의 동적 메모리 할당 
+
+
+FILE FileOpen(FILE* wordfile, string fileName, int score)
+{
+	fopen_s(&wordfile, "D:\Word\File\wordText", "r+"); // 읽고 쓰기 전용으로 선언
+
+	fscanf_s(wordfile, "%s %d", fileName, &score);
+	
+	if (wordfile != nullptr ) fclose(wordFile);
+	
+	
+	return *wordfile; // FILE 포인터 반환 
+}
+
+FILE Binary(FILE* wordfile, int score)
+{
+	fopen_s(&wordfile, "D:\WordFile\wordText.dll", "wb");
+
+		if (wordfile == nullptr)
+		{
+			printf("파일을 열 수 없습니다.");
+			return;
+		}
+		fprintf(wordfile, "wordText."); 
+
+	fread(words, sizeof(char*), 10, wordfile); 
+	fclose(wordfile);
+
+	for (int i = 0; i < score; ++i)
+	{
+		printf("%d", words[i]); 
+	}
+	fwrite(words, sizeof(char*), score, wordfile); 
+	fclose(wordfile); 
+
+	return;
+}
+
+FILE TextList(FILE* wordfile, string Name , int score)
+{
+	fprintf(wordfile, "이름 : %s, 개수 : %d\n", Name, score);
+
+	for (int i = 0; i < score; ++i)
+	{
+		fscanf(wordfile, "이름 : % s, 개수 : % d\n",Name, &score);
+
+		i = fputs(words, wordfile);
+		wordfile[i];
+	}
+
+	if (wordfile == nullptr) FileClose(wordfile); 
+
+	return *wordfile; 
+}
+
+int pointerMove()
+{
+	if (fclose(wordFile))
+	{
+		rewind(wordFile);
+	}
+	if (wordFile == nullptr) return; 
+
+	fseek(wordFile, 0, SEEK_END);
+	long fileSize = ftell(wordFile); 
+	rewind(wordFile); 
+	
+	printf("파일 크기 : %ld byte\n", fileSize);
+
+	return 0; 
+}
+
+FILE FileClose(FILE* wordfile)
+{
+	if (wordfile != nullptr)
+		fclose(wordfile);
+}
+
+
+void play(char* word)
+{
+	long wrongCount = 0; // 틀린 횟수를 저장한다. 
+	long playCount = 5;
+	char Found[MAX_LENGTH] = { '_' };
+	bool isCheck = false;
+
+	int len = sizeof(word) / sizeof(char);
+	for (int i = 0; i < len; ++i)
+	{
+		printf("%s", Found[i]); // 숨겨진 값 출력 하기 
+	}
+
+	while (playCount <= 0)
+	{
+		for (int i = 0; 0 <= playCount; ++i)
+		{
+			char input;
+			scanf_s("%s", &input);
+
+			playCount--;
+
+			for (int i = 0; i < len; ++i)
+			{
+				if (word[i] == input && !Found[i])
+				{
+					Found[i] = input;
+					isCheck = true; // 동일 한 것을 찾았다면 true  
+				}
+				else if (!isCheck)
+				{
+					printf("틀렸습니다!\n");
+					wrongCount++;
+				}
+				else if (Found[i])
+				{
+					printf("%s", word[i]);
+				}
+				else
+				{
+					printf("%_");
+				}
+			}
+
+			int length = strlen(word);
+			int allFound = 1;
+			for (int i = 0; i < length; ++i)
+			{
+				if (!allFound)
+				{
+					allFound = 0;
+					break;
+				}
+			}
+
+			if (!allFound)
+			{
+				printf("축하합니다. 정답입니다. \n");
+				return;
+			}
+			else
+			{
+				printf("정답은 : %s\n", word);
+				return;
+			}
+
+			if (playCount == 0 && wrongCount == 5)
+			{
+				printf("실패 하셨습니다.\n");
+				return;
+			}
+			else
+			{
+				printf("다시 시도해주세요. 현재 플레이 카운트 : %d  , 현재 정답 카운트 : %d\n", playCount, wrongCount);
+			}
+
+
+		}
+
+
+	}
+}
